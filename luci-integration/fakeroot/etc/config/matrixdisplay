@@ -1,0 +1,4 @@
+
+config matrixdisplay 'rawisbox'
+	option text 'rawisbox-test'
+

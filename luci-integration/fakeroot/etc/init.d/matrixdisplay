@@ -1,0 +1,9 @@
+#!/bin/sh /etc/rc.common
+
+START=80
+
+start() {
+	sleep 30
+	/root/matrixdisplay_set.py
+}
+

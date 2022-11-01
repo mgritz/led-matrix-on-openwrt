@@ -18,12 +18,9 @@ while True:
 
         text = content.split("'")[3] # now this is a bit of a hack, of course, but well...
 
-        with serial.Serial(SERIALIFACE, 9600) as s:
-            s.write(text.encode('ascii') + b'\n')
+        with serial.Serial(SERIALIFACE, 115200) as s:
+            s.write(b'iLAB' + text.encode('ascii') + b'\n')
 
         print("text changed to \"{}\"".format(text))
 
     sleep(10)
-        
-
-

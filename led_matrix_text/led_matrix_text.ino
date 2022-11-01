@@ -20,11 +20,11 @@ void setup() {
   matrix.setBrightness(40);
   matrix.setTextColor(matrix.Color(255,0,255));
 
-  Serial.begin(9600);
+  Serial.begin(115200);
 }
 
 int x = matrix.width();
-String txt = "Alles Gute, Gentleman!";
+String txt = "Alles Gute, Stephan!";
 String next_txt = "";
 
 void loop() {
@@ -43,10 +43,20 @@ void loop() {
 void serialEvent() {
   const char in = Serial.read();
   if (in == '\n') {
-    txt = next_txt;
-    next_txt = "";
-    matrix.fillScreen(0);
-    x = matrix.width();
+    if (next_txt.length() >= 4) {
+      txt = next_txt.substring(4);
+      next_txt = "";
+      matrix.fillScreen(0);
+      x = matrix.width();
+      Serial.println(txt);
+    }
   } else
     next_txt += in;
+
+  if ( ( (next_txt.length() > 4) && (! next_txt.startsWith("iLAB")))
+          || (next_txt.length() > 280) )
+  {
+    next_txt = "";
+    Serial.println("&reset");
+  }
 }

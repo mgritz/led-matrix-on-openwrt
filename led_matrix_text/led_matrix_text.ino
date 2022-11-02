@@ -20,7 +20,7 @@ void setup() {
   matrix.setBrightness(40);
   matrix.setTextColor(matrix.Color(255,0,255));
 
-  Serial.begin(115200);
+  Serial.begin(9600);
 }
 
 int x = matrix.width();

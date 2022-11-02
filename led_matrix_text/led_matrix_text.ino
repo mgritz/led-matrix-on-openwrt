@@ -48,15 +48,13 @@ void serialEvent() {
       next_txt = "";
       matrix.fillScreen(0);
       x = matrix.width();
-      Serial.println(txt);
     }
   } else
     next_txt += in;
 
   if ( ( (next_txt.length() > 4) && (! next_txt.startsWith("iLAB")))
-          || (next_txt.length() > 280) )
+          || (next_txt.length() > 40) )
   {
     next_txt = "";
-    Serial.println("&reset");
   }
 }

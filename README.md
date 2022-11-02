@@ -7,7 +7,7 @@
 
 # License
 
-Copyright 2022 Martin Gritzan
+Copyright 2022 Urban Jacobs, Martin Gritzan
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in

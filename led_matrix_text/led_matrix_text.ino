@@ -40,21 +40,26 @@ void loop() {
   delay(250);
 }
 
+int rxcnt = 0;
+
 void serialEvent() {
   const char in = Serial.read();
   if (in == '\n') {
-    if (next_txt.length() >= 4) {
+    if (rxcnt >= 4) {
       txt = next_txt.substring(4);
       next_txt = "";
+      rxcnt = 0;
       matrix.fillScreen(0);
       x = matrix.width();
     }
-  } else
+  } else {
     next_txt += in;
+    rxcnt++;
+  }
 
-  if ( ( (next_txt.length() > 4) && (! next_txt.startsWith("iLAB")))
-          || (next_txt.length() > 40) )
+  if ( (rxcnt > 4) && (! next_txt.startsWith("iLAB"))
+          || (rxcnt > 40) )
   {
-    next_txt = "";
+    next_txt = next_txt.substring(4);
   }
 }

@@ -29,7 +29,6 @@ String next_txt = "";
 #define WIDTH  8
 #define HEIGHT 5
 
-#define COLOR_IDX     3
 #define SLEEPTIME_MS  250
 
 
@@ -135,7 +134,7 @@ void loop() {
   ascii_to_display(txt.c_str());
 
   size_t scrollpos;
-scroll:
+
   for (scrollpos = 0; scrollpos < len * (LETTER_WIDTH+1) + WIDTH; scrollpos++) {
     virtual_to_real_display(scrollpos);
     delay(SLEEPTIME_MS);

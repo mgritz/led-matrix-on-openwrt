@@ -33,20 +33,22 @@ String next_txt = "";
 #define SLEEPTIME_MS  250
 
 
-bool virtual_display[VIRTUAL_WIDTH][HEIGHT] = {0};
-bool display[WIDTH][HEIGHT] = {0};
+uint8_t virtual_display[VIRTUAL_WIDTH] = {0};
+uint8_t display[WIDTH] = {0};
 
 void reset_display()
 {
-  uint8_t x, y;
+  uint8_t x;
   for (x = 0; x < WIDTH; x++)
-    for(y = 0; y < HEIGHT; y++)
-      display[x][y] = 0;
+    display[x] = 0;
 }
 
 void set_pixel(size_t x, size_t y, bool state)
 {
-  virtual_display[x][y] = state;
+  if (state)
+    virtual_display[x] |= (1 << y);
+  else
+    virtual_display[x] &= ~(1 << y);
 }
 
 void print_display()
@@ -54,7 +56,7 @@ void print_display()
   uint8_t x, y;
   for (y = 0; y < HEIGHT; y++) {
     for (x = 0; x < WIDTH; x++)
-      if (display[x][y] == 1) {
+      if (display[x] & (1 << y)) {
         const size_t pixel_idx = (y * WIDTH) + x;
         strip.setPixelColor(pixel_idx, 0x0f, 0x0f, 0x0f);
       }
@@ -62,42 +64,44 @@ void print_display()
   strip.show();
 }
 
-void draw_letter(size_t offs_x, size_t offs_y, const letter ltr, bool inverted)
+void draw_letter(size_t offs_x, size_t offs_y, const uint16_t ltr, bool inverted)
 {
   size_t x, y;
   for (y = 0; y < LETTER_HEIGHT; y++)
-    for (x = 0; x < LETTER_WIDTH; x++)
+    for (x = 0; x < LETTER_WIDTH; x++) {
+      bool pixel_state = ltr & (1 << ((y * LETTER_WIDTH) + x)) ? true : false;
       if (inverted == 0)
-        set_pixel(offs_x + x, offs_y + y, ltr[y][x]);
+        set_pixel(offs_x + x, offs_y + y, pixel_state);
       else
-        set_pixel(offs_x + x, offs_y + y, !ltr[y][x]);
+        set_pixel(offs_x + x, offs_y + y, !pixel_state);
+    }
 }
 
-void ascii_to_display(const char* str)
+void ascii_to_display(char* str)
 {
   size_t len = strlen(str);
   size_t i;
   for (i = 0; i < len; i++) {
     // capital letters
     if (str[i] >= 65 && str[i] <= 90)
-      draw_letter(i * (LETTER_WIDTH+1), 0, *alphabet[str[i] - 65], 0);
+      draw_letter(i * (LETTER_WIDTH+1), 0, alphabet[str[i] - 65], 0);
     // lower case letters
     else if (str[i] >= 97 && str[i] <= 122)
-      draw_letter(i * (LETTER_WIDTH+1), 0, *alphabet[str[i] - 97], 0);
+      draw_letter(i * (LETTER_WIDTH+1), 0, alphabet[str[i] - 97], 0);
     // numbers
     else if (str[i] >= 48 && str[i] <= 57)
-      draw_letter(i * (LETTER_WIDTH+1), 0, *numbers[str[i] - 48], 0);
+      draw_letter(i * (LETTER_WIDTH+1), 0, numbers[str[i] - 48], 0);
     // some special characters
     else if (str[i] >= 32 && str[i] <= 34)
-      draw_letter(i * (LETTER_WIDTH+1), 0, *special_chars_section1[str[i] - 32], 0);
+      draw_letter(i * (LETTER_WIDTH+1), 0, special_chars_section1[str[i] - 32], 0);
     else if (str[i] == '%')
       draw_letter(i * (LETTER_WIDTH+1), 0, percent, 0);
     else if (str[i] >= 39 && str[i] <= 47)
-      draw_letter(i * (LETTER_WIDTH+1), 0, *special_chars_section3[str[i] - 39], 0);
+      draw_letter(i * (LETTER_WIDTH+1), 0, special_chars_section3[str[i] - 39], 0);
     else if (str[i] >= 58 && str[i] <= 63)
-      draw_letter(i * (LETTER_WIDTH+1), 0, *special_chars_section4[str[i] - 58], 0);
+      draw_letter(i * (LETTER_WIDTH+1), 0, special_chars_section4[str[i] - 58], 0);
     else if (str[i] >= 91 && str[i] <= 96)
-      draw_letter(i * (LETTER_WIDTH+1), 0, *special_chars_section5[str[i] - 91], 0);
+      draw_letter(i * (LETTER_WIDTH+1), 0, special_chars_section5[str[i] - 91], 0);
     // unsupported character
     else
       draw_letter(i * (LETTER_WIDTH+1), 0, not_supported, 0);
@@ -106,7 +110,7 @@ void ascii_to_display(const char* str)
 
 void virtual_to_real_display(size_t scrolling_position)
 {
-  size_t x, y;
+  size_t x;
   size_t x_start = 0;
   size_t virtual_x_start = 0;
 
@@ -117,8 +121,7 @@ void virtual_to_real_display(size_t scrolling_position)
 
   reset_display();
   for (x = 0; x < WIDTH; x++)
-    for (y = 0; y < HEIGHT; y++)
-      display[x_start + x][y] = virtual_display[virtual_x_start + x][y];
+    display[x_start + x] = virtual_display[virtual_x_start + x];
 
   print_display();
 }

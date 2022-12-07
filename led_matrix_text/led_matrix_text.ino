@@ -40,6 +40,8 @@ void reset_display()
   uint8_t x;
   for (x = 0; x < WIDTH; x++)
     display[x] = 0;
+
+  strip.clear();
 }
 
 void set_pixel(size_t x, size_t y, bool state)

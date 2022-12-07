@@ -44,6 +44,13 @@ void reset_display()
   strip.clear();
 }
 
+void reset_virtual_display()
+{
+  size_t x;
+  for (x = 0; x < VIRTUAL_WIDTH; x++)
+    virtual_display[x] = 0;
+}
+
 void set_pixel(size_t x, size_t y, bool state)
 {
   if (state)
@@ -133,6 +140,7 @@ void virtual_to_real_display(size_t scrolling_position)
 void loop() {
   size_t len = txt.length();
 
+  reset_virtual_display();
   ascii_to_display(txt.c_str());
 
   size_t scrollpos;

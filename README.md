@@ -5,6 +5,34 @@
 * UART connection to an Arduino Nano
 * WS2812 driver on the Arduino
 
+Connection diagram:
+
+```
+                           electric switch
+                                 |
+LED matrix <-------- Arduino <---|--- Router <-----> Your PC
+             WS2812            UART            LAN
+```
+
+# Getting started
+
+Unfortunately, the router seems not to like the UART connection when booting,
+so it has to be cut off using the electric switch during startup.
+
+After the router is up (which takes about a minute) and *before* the next
+step, the UART needs to be re-connected.
+
+Then, connect to the router via SSH (password see inner side of lid) and
+start the Python script that forwards the text to the Arduino via UART:
+
+```
+ssh root@192.168.23.202
+root@OpenWrt:~# python3 matrixdisplay_set.py
+```
+
+Now, you \#should be able to set your own text via the router's web interface
+(System -> Matrix Display). Up to 300 characters are allowed.
+
 # License
 
 Copyright 2022 Urban Jacobs, Martin Gritzan

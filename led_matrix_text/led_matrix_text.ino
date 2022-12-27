@@ -135,19 +135,25 @@ void virtual_to_real_display(size_t scrolling_position)
 }
 
 
-
+size_t scrollpos = 0;
+bool new_text_received = true;   // init with default text at startup
 
 void loop() {
   size_t len = txt.length();
 
-  reset_virtual_display();
-  ascii_to_display(txt.c_str());
+  if (new_text_received) {
+    reset_virtual_display();
+    ascii_to_display(txt.c_str());
+    scrollpos = 0;
+    new_text_received = false;
+  }
 
-  size_t scrollpos;
-
-  for (scrollpos = 0; scrollpos < len * (LETTER_WIDTH+1) + WIDTH; scrollpos++) {
+  if (scrollpos < len * (LETTER_WIDTH+1) + WIDTH) {
     virtual_to_real_display(scrollpos);
     delay(SLEEPTIME_MS);
+    scrollpos++;
+  } else {
+    scrollpos = 0;
   }
 }
 
@@ -160,6 +166,7 @@ void serialEvent() {
       txt = next_txt.substring(4);
       next_txt = "";
       rxcnt = 0;
+      new_text_received = true;
     }
   } else {
     next_txt += in;

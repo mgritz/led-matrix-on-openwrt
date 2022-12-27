@@ -23,7 +23,7 @@ String txt = "Kannscht du hier mal was sinnvolles reinschreiben?";
 String next_txt = "";
 
 
-#define STR_MAXLEN 128
+#define STR_MAXLEN 300
 
 #define VIRTUAL_WIDTH (STR_MAXLEN * (LETTER_WIDTH+1))
 #define WIDTH  8
